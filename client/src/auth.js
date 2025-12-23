@@ -1,20 +1,19 @@
-import NextAuth from "next-auth"
-import Google from 'next-auth/providers/google'
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
 
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  providers: [Google],
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account?.id_token) {
+        token.idToken = account.id_token;
+      }
 
-export const {handlers,signIn,signOut,auth} = NextAuth({
-    providers:[Google],
-    callbacks:{
-        async jwt({token,account}) {
-            if(account?.id_token){
-                token.idToken = account.id_token
-            }
-
-            return token;
-        }
+      return token;
     },
-    async session({session,token}){
-        session.idToken = token.idToken;
-        return session;
-    }
-})
+    async session({ session, token }) {
+      session.idToken = token.idToken;
+      return session;
+    },
+  },
+});
