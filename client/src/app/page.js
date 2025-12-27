@@ -1,9 +1,21 @@
-import Image from "next/image";
+import { DesignTypes } from "@/components/config";
+import Banner from "@/components/home/banner";
+import DesignLogo from "@/components/home/design-types";
+import Header from "@/components/home/header";
+import HomeSideBar from "@/components/home/sidebar";
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      home page
+
+
+export default function Home(){
+    return <div className="flex min-h-screen bg-white" >
+      <HomeSideBar/>
+      <div className="flex-1 flex flex-col ml-[72px]" >
+        <Header/>
+        <main className='flex-1 p-6 overflow-y-auto pt-20'>
+          <Banner/>
+          <DesignLogo/>
+          <des/>
+       </main>
+      </div>
     </div>
-  );
 }
