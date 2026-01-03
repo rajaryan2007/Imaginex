@@ -1,6 +1,22 @@
+"use client"
 
+import { getUserDesign } from "@/service/design-service";
+import { useEffect, useState } from "react";
 
 function RecentDesign() {
+  const [UserDesign,setUserDesign] = useState([])
+
+  async function  fetchUserDesigns() {
+    const result = await getUserDesign()
+
+    console.log(result,"result");
+    
+  }
+  
+  useEffect(()=>{
+    fetchUserDesigns()
+  },[])
+
   const designs = Array(6).fill(null).map((_, i) => ({
     id: i,
     title: `Design ${i + 1}`,

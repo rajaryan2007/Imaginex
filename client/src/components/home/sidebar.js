@@ -8,7 +8,7 @@ function HomeSideBar() {
         <aside className="w-[72px] bg-[#f8f8c] border-rouded flex-col items-center py-4 fixed left-0 top-0 h-full x-20">
             <div className="flex flex-col items-center" >
                 <button className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white hover:bg-purple-700 transition-color">
-                    <Plus className="w-6 h-" />
+                    <Plus className="w-6 h-6" />
                 </button>
                 <div className="text-xs font-medium text-center mt-1 text-gray-700" >
                     Create
