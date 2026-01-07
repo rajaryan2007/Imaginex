@@ -4,7 +4,7 @@ import Google from "next-auth/providers/google";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
-      // 1. Force Google to provide a refresh_token
+
       authorization: {
         params: {
           access_type: "offline",
@@ -15,7 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account }) {
-      // Initial sign in: store all tokens
+
       if (account) {
         return {
           ...token,
@@ -26,12 +26,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       }
 
-      // Return previous token if the id_token has not expired yet
+
       if (Date.now() < token.expiresAt) {
         return token;
       }
 
-      // 2. Token has expired, try to refresh it
+
       try {
         const response = await fetch("https://oauth2.googleapis.com/token", {
           method: "POST",
@@ -49,10 +49,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         return {
           ...token,
-          idToken: tokens.id_token, // This is your fresh ID token!
+          idToken: tokens.id_token,
           accessToken: tokens.access_token,
           expiresAt: Date.now() + tokens.expires_in * 1000,
-          // Fall back to old refresh token if a new one isn't provided
+
           refreshToken: tokens.refresh_token ?? token.refreshToken,
         };
       } catch (error) {

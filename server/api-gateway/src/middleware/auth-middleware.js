@@ -3,6 +3,9 @@ const {OAuth2Client} = require('google-auth-library')
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 async function authMiddleware(req,res,next){
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]
 
@@ -19,7 +22,8 @@ async function authMiddleware(req,res,next){
         })
 
         const payload = ticket.getPayload();
-
+        console.log(payload);
+        
         //add user info to req.user
         req.user ={
             userId : payload['sub'],
@@ -35,7 +39,7 @@ async function authMiddleware(req,res,next){
         next()
 
     } catch (error) {
-        console.error('Token verification failed',err)
+        console.error('Token verification failed',error)
         res.status(401).json({
             error:"invalid Token!"
         })

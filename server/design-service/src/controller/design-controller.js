@@ -2,7 +2,7 @@ const Design = require("../models/design")
 
 exports.getUserDesigns = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.userId;
         const design = await Design.find({ userId }).sort({ updateAt: -1 });
 
         return res.status(200).json({
@@ -74,7 +74,7 @@ exports.saveDesign = async (req, res) => {
                 data: updatedDesign
             })
         } else {
-            const newDesign = newDesign({
+            const newDesign = new Design({
                 userId,
                 name: name || 'Utitled Design',
                 width,
@@ -106,7 +106,7 @@ exports.deleteDesign = async(req,res)=>{
             const userId = req.user.userId;
             const designId = req.params.id;
 
-    await Design.deleteOne({_id:designId}) 
+    await Design.deleteOne({_id:designId, userId}) 
     
     res.status(200).json({
         success:true,
