@@ -1,5 +1,5 @@
 "use client"
-import { Crown } from "lucide-react";
+import { Crown, Loader } from "lucide-react";
 import { Button } from "../ui/button";
 import { saveDesign } from "@/service/design-service";
 import { useState } from "react";

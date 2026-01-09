@@ -1,10 +1,10 @@
+import MainEditor from "@/components/editor";
 
 
 export default function editor() {
   return (
-    <div>hello from editor</div>
+    <MainEditor />
   )
-
 }
 
 
