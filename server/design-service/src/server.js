@@ -29,14 +29,14 @@ app.use('/api/designs', designRoutes)
 
 
 async function startServer() {
-    try {
-      app.listen(PORT, () => console.log(`Design Service running on port ${PORT}`))
+  try {
+    app.listen(PORT, () => console.log(`Design Service running on port ${PORT}`))
 
-    } catch (error) {
-      console.error('Failed to connected to server', error);
-      process.exit(1);
-    }
+  } catch (error) {
+    console.error('Failed to connected to server', error);
+    process.exit(1);
   }
+}
 
 
 startServer();

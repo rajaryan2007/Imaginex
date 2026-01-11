@@ -7,8 +7,6 @@ import { useRouter } from "next/navigation";
 
 function Banner() {
 
-
-
   const [loading, setLoading] = useState(false);
   const router = useRouter()
   const handleCreateNewDesign = async (e) => {

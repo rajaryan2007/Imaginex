@@ -2,7 +2,11 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-
+html, body, #__next, [data-reactroot] {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
