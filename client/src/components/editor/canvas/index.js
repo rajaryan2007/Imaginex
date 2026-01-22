@@ -2,7 +2,7 @@
 
 import { initializeFabric } from "@/fabric/fabric-utils"
 import { useEffect, useRef } from "react"
-
+import { useEditorStore } from "@/store/store";
 
 function Canvas() {
 
@@ -10,7 +10,7 @@ function Canvas() {
   const canvasContainerRef = useRef(null)
   const fabricCanvasRef = useRef(null)
   const initAttemptRef = useRef(false)
-
+  const { setCanvas, markAsModified } = useEditorStore();
   useEffect(() => {
     const cleanUpCanvas = () => {
       if (fabricCanvasRef.current) {
@@ -31,34 +31,32 @@ function Canvas() {
     initAttemptRef.current != false;
 
     const initCanvas = async () => {
-      if (typeof window === undefined || !canvasRef.current || initAttemptRef.current) {
-        return
+      if (typeof window === "undefined" || !canvasRef.current || initAttemptRef.current) {
+        return;
       }
 
-      initAttemptRef.current = true
+      initAttemptRef.current = true;
       try {
-        const fabricCanvasRef = await initializeFabric(canvasRef.current, canvasContainerRef.current)
+        const canvasInstance = await initializeFabric(
+          canvasRef.current,
+          canvasContainerRef.current
+        );
 
-        if (!fabricCanvasRef) {
-          console.error('Faild to initialize Fabric.js canvas')
-
-          return
+        if (!canvasInstance) {
+          console.error("Failed to initialize Fabric.js canvas");
+          return;
         }
 
-        fabricCanvasRef.current = fabricCanvas
-        //set the canvas in store
-        setCanvas(fabricCanvas)
+        fabricCanvasRef.current = canvasInstance;
 
-        console.log('Canvas init is done and set in store');
+        // set the canvas in store
+        setCanvas(canvasInstance);
 
-        //apply custom style for the controls 
-        //to do 
-
-
+        console.log("Canvas init is done and set in store");
       } catch (e) {
-        console.error('Failed to init canvas', e);
+        console.error("Failed to init canvas", e);
       }
-    }
+    };
 
     const timer = setTimeout(() => {
       initCanvas()
@@ -68,11 +66,11 @@ function Canvas() {
       clearTimeout(timer)
       cleanUpCanvas();
     }
-  }, [])
+  }, [setCanvas]);
 
 
   return (
-    <div className="relative w-full h-[600px] overflow-auto" ref={canvasContainerRef}>
+    <div className="relative w-full h-full flex items-center justify-center" ref={canvasContainerRef}>
       {/* This creates the actual HTML element for Fabric.js to hook into */}
       <canvas ref={canvasRef} />
     </div>
