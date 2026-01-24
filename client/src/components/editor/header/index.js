@@ -1,53 +1,88 @@
-"use client";
+"use client"
 
-import { 
-  Undo2, 
-  Redo2, 
-  Download, 
-  Share2, 
-  LayoutTemplate,
-  ChevronDown
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { useEditorStore } from "@/store/store"
+import { useSession, signOut } from "next-auth/react";
+
+const { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } = require("@/components/ui/dropdown-menu")
+const { ChevronDown, Pencil, Eye, Save, LogOut, Star } = require("lucide-react")
 
 function Header() {
-  return (
-    <header className="h-14 border-b bg-white flex items-center justify-between px-4 shrink-0 z-100">
-      <div className="flex items-center gap-x-4">
-        <div className="flex items-center gap-x-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-            <LayoutTemplate className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-bold text-xl tracking-tight text-slate-900">Imaginex</span>
-        </div>
-        
-        <Separator orientation="vertical" className="h-6" />
-        
-        <div className="flex items-center gap-x-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Undo2 className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Redo2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
 
-      <div className="flex items-center gap-x-3">
-        <Button variant="outline" size="sm" className="gap-x-2 font-medium">
-          <Share2 className="h-4 w-4" />
-          Share
-        </Button>
-        
-        <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 gap-x-2 font-medium">
-          <Download className="h-4 w-4" />
-          Download
-          <ChevronDown className="h-3 w-3 opacity-50" />
-        </Button>
-      </div>
-    </header>
-  );
+  const { isEditing, setIsEditing, name, setName } = useEditorStore();
+  const { data: session } = useSession();
+
+  const handleLogout = () => {
+    signOut();
+  }
+  return <header className="header-gradient header flex items-center justify-between px-4 h-14">
+    <div className="flex itmes-center space-x-2" >
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild="true">
+          <button className="header-button flex itmes-center text-white">
+            <span>{isEditing ? 'Editing' : 'Viewing'}</span>
+            <ChevronDown className="ml-1 h-4 w-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          <DropdownMenuItem
+            onClick={() => setIsEditing(true)}
+          >
+            <Pencil className="mr-2 h-4 w-4" />
+            <span>Editing</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setIsEditing(false)}
+          >
+            <Eye className="mr-2 h-2 w-4" />
+            <span>Viewing</span>
+          </DropdownMenuItem>
+
+        </DropdownMenuContent>
+
+      </DropdownMenu>
+    </div>
+    <div>
+      <button className="header-button relative" title="save" >
+        <Save className="w-5 h-5" />
+      </button>
+    </div>
+    <div className="flex-1 flex justify-center max-w-md" >
+      <Input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="w-full"
+      />
+    </div>
+    <div className="flex items-center space-x-3">
+      <button className="upgrade-button flex items-center bg-white/10 hover:bg-white/20 text-white rounded-md h-9 px-3 transition-colors">
+        <Star className="mr-1 h-4 w-4 text-yellow-400" />
+        Upgrade-your-plan
+      </button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild="true">
+          <div className="flex items-center space-x-2">
+            <Avatar>
+              <AvatarFallback>
+                {session?.user?.name?.[0] || "U"}
+              </AvatarFallback>
+              <AvatarImage src={session?.user?.image || '/placeholder-user.jpg'} />
+            </Avatar>
+
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className='w-56'>
+          <DropdownMenuItem onClick={handleLogout} className={'cursor-pointer'} >
+            <LogOut className="mr-2 w-4 h-4" />
+            <span className="font-bold">Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+    </div>
+  </header>
 }
 
 export default Header;
