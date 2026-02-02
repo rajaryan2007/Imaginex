@@ -13,6 +13,13 @@ import { ArrowDown01 } from "lucide-react";
 function MainEditor() {
   const params = useParams();
   const router = useRouter();
+  
+  // DEBUGGING LOGS
+  console.log("------------------------------------------------");
+  console.log(" EDITOR COMPONENT MOUNTED");
+  console.log("Params received:", params);
+  console.log("Design ID received:", params?.slug);
+  console.log("------------------------------------------------");
 
   const designId = params?.slug;
 
@@ -20,7 +27,7 @@ function MainEditor() {
   const [loadAttempted, setloadAttempted] = useState(false);
   const [error, setError] = useState(null);
 
-  const { canvas, setDesignId, resetStore } = useEditorStore();
+  const { canvas, setDesignId, resetStore ,setName} = useEditorStore();
 
   useEffect(() => {
     resetStore();
@@ -68,12 +75,15 @@ function MainEditor() {
     try {
       setIsLoading(true);
       setloadAttempted(true);
+      
+      
 
       const response = await getUserDesignID(designId);
       const design = response.data;
 
       if (design) {
         setDesignId(designId);
+        setName(design.name);
       }
       console.log("Design loaded:", response);
 
@@ -95,11 +105,13 @@ function MainEditor() {
 
           const hasObjects = canvasData.objects && canvasData.objects.length > 0;
 
-          if (canvasData.background) {
-            fabricInstance.backgroundColor = canvasData.background;
-          } else {
-            fabricInstance.backgroundColor = "#ffffff";
-          }
+
+          const bgColor = canvasData.background || "#000000";
+          console.log("Setting background to:", bgColor);
+          
+          fabricInstance.set("backgroundColor", bgColor);
+          fabricInstance.renderAll();
+
 
           if (!hasObjects) {
             fabricInstance.renderAll();
@@ -129,7 +141,7 @@ function MainEditor() {
             width: design.width || 800,
             height: design.height || 600
           });
-          fabricInstance.backgroundColor = "#black";
+          fabricInstance.backgroundColor = "#ffffff";
           fabricInstance.renderAll();
           fabricInstance.calcOffset();
         }
@@ -151,6 +163,7 @@ function MainEditor() {
       if (designId && canvas && !loadAttempted) {
         await loadDesign();
       } else if (!designId) {
+        console.warn("⚠️ Editor: No Design ID found. Redirecting to home...");
         router.replace("/");
       }
     };
@@ -163,7 +176,7 @@ function MainEditor() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 relative overflow-hidden flex items-center justify-center p-8">
-          <div className="w-full h-full bg-white rounded-xl shadow-sm border overflow-hidden flex items-center justify-center">
+          <div className="w-full h-full bg-slate-200 rounded-xl shadow-sm border overflow-hidden flex items-center justify-center">
             <Canvas />
           </div>
         </main>

@@ -10,18 +10,21 @@ const { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem
 const { ChevronDown, Pencil, Eye, Save, LogOut, Star } = require("lucide-react")
 
 function Header() {
-
+  
   const { isEditing, setIsEditing, name, setName } = useEditorStore();
   const { data: session } = useSession();
 
   const handleLogout = () => {
     signOut();
   }
+
+  
+
   return <header className="header-gradient header flex items-center justify-between px-4 h-14">
-    <div className="flex itmes-center space-x-2" >
+    <div className="flex items-center space-x-2" >
       <DropdownMenu>
-        <DropdownMenuTrigger asChild="true">
-          <button className="header-button flex itmes-center text-white">
+        <DropdownMenuTrigger asChild>
+          <button className="header-button flex items-center text-white">
             <span>{isEditing ? 'Editing' : 'Viewing'}</span>
             <ChevronDown className="ml-1 h-4 w-4" />
           </button>
@@ -36,7 +39,7 @@ function Header() {
           <DropdownMenuItem
             onClick={() => setIsEditing(false)}
           >
-            <Eye className="mr-2 h-2 w-4" />
+            <Eye className="mr-2 h-4 w-4" />
             <span>Viewing</span>
           </DropdownMenuItem>
 
@@ -62,7 +65,7 @@ function Header() {
         Upgrade-your-plan
       </button>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild="true">
+        <DropdownMenuTrigger asChild>
           <div className="flex items-center space-x-2">
             <Avatar>
               <AvatarFallback>

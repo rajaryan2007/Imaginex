@@ -1,53 +1,115 @@
 "use client";
 
-import { 
-  LayoutTemplate, 
-  Type, 
-  Shapes, 
-  Image as ImageIcon, 
-  Pencil,
-  Settings2
-} from "lucide-react";
-import { cn } from "@/lib/utils";
 
-const sidebarItems = [
-  { icon: LayoutTemplate, label: "Templates", id: "templates" },
-  { icon: Shapes, label: "Elements", id: "elements" },
-  { icon: Type, label: "Text", id: "text" },
-  { icon: ImageIcon, label: "Uploads", id: "uploads" },
-  { icon: Pencil, label: "Draw", id: "draw" },
-];
+import ElementsPanels from "./panel/elements";
+import TextPanel from "./panel/text";
+import AIPanel from "./panel/AI";
+import { useState } from "react";
+import DrawPanel from "./panel/draw";
+import { ArrowLeft, ChevronLeft, Grid, Pencil, Settings, Sparkle, Type, Upload } from "lucide-react";
+import SettingPanel from "./panel/settings";
+import UploadPanel from "./panel/upload";
+
 
 function Sidebar() {
-  const activeTab = "templates"; // Placeholder for state
+  const [isPanelColleapsed, setIsPanelCollapsed] = useState(false);
+  const [activeSidebar, setActiveSidebar] = useState(null);
+
+  const sidebarItems = [
+    {
+      id: "elements",
+      icon: Grid,
+      label: "Elements",
+      panel: () => <ElementsPanels />
+    },
+    {
+      id: "text",
+      icon: Type,
+      label: "Text",
+      panel: () => <TextPanel />
+    },
+    {
+      id: "uploads",
+      icon: Upload,
+      label: "Uploads",
+      panel: () => <UploadPanel />
+    },
+    {
+      id: "AI",
+      icon: Sparkle,
+      label: "AI",
+      panel: () => <AIPanel />
+    },
+    {
+      id: "draw",
+      icon: Pencil,
+      label: "Draw",
+      panel: () => <DrawPanel />
+    },
+    {
+      id: "setting",
+      icon: Settings,
+      label: "Setting",
+      panel: () => <SettingPanel />
+    },
+  ]
+
+  const handleItemClick = (id) => {
+    if (id === activeSidebar && !isPanelColleapsed) return
+
+    setActiveSidebar(id)
+    setIsPanelCollapsed(false)
+  }
+
+  const closeSecondaryPanel = () => {
+    setActiveSidebar(false);
+  }
+
+  const togglePanelCollagpse = (e) => {
+    e.stopPropagation();
+    setIsPanelCollapsed(!isPanelColleapsed)
+  }
+
+
+  const activeItem = sidebarItems.find(items => items.id == activeSidebar)
 
   return (
-    <aside className="w-[72px] bg-white border-r flex flex-col items-center py-4 gap-y-4 shrink-0 z-90">
-      {sidebarItems.map((item) => (
-        <button
-          key={item.id}
-          className={cn(
-            "w-14 h-14 flex flex-col items-center justify-center gap-y-1 rounded-lg transition-colors group",
-            activeTab === item.id 
-              ? "bg-slate-100 text-indigo-600" 
-              : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-          )}
+    <div className="flex h-full" >
+      <aside className="sidebar">
+        {
+          sidebarItems.map(item => (
+            <div onClick={() => handleItemClick(item.id)} key={item.id} className={`sidebar-item ${activeSidebar === item.id ? 'active' : ""}`}>
+              <item.icon className="sidebar-item-icon h-5 w-5" />
+              <span className="sidebar-item-label">{item.label}</span>
+            </div>
+          ))
+        }
+      </aside>
+      {
+        activeSidebar && <div className={`secondary-panel ${isPanelColleapsed ? 'collapsed' : ''}`}
+          style={{
+            width: isPanelColleapsed ? '0' : "320px",
+            opacity: isPanelColleapsed ? 0 : 1,
+            overflow: isPanelColleapsed ? 'hidden' : 'visible'
+          }}
         >
-          <item.icon className={cn(
-            "w-5 h-5 transition-transform group-hover:scale-110",
-            activeTab === item.id ? "text-indigo-600" : "text-slate-500"
-          )} />
-          <span className="text-[10px] font-medium">{item.label}</span>
-        </button>
-      ))}
-      
-      <div className="mt-auto">
-        <button className="w-14 h-14 flex flex-col items-center justify-center gap-y-1 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors group">
-          <Settings2 className="w-5 h-5 group-hover:rotate-45 transition-transform" />
-          <span className="text-[10px] font-medium">Settings</span>
-        </button>
-      </div>
-    </aside>
+          <div className="panel-header" >
+            <button className="back-button" onClick={closeSecondaryPanel}>
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <span className="panel-title">{activeItem.label}</span>
+          </div>
+          <div className="panel-content " >{activeItem?.panel()}</div>
+          <button className="collapse-button"
+            onClick={togglePanelCollagpse}
+
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+        </div>
+      }
+    </div>
   );
 }
 

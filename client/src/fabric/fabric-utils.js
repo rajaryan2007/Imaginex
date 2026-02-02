@@ -1,3 +1,5 @@
+import { shapeDefinations } from './shapes/shape-definations'
+import { createShape } from './shapes/shape-factory'
 
 
 
@@ -23,7 +25,7 @@ export const initializeFabric = async (canvasE1, containerE1) => {
   }
 }
 
-
+  
 
 
 export const centerCanvas = (canvas) => {
@@ -40,3 +42,28 @@ export const centerCanvas = (canvas) => {
   canvasWrapper.style.transform = "translate(-50%, -50%)";
 }
 
+
+export const addShapeToCanvas = async (canvas,shapeType,customProps={})=>{
+  if(!shapeType) return null; 
+  try {
+    const fabricModule = await import('fabric');
+    
+    const shape = createShape(fabricModule,shapeType,shapeDefinations,{
+      left: 100,
+      top: 100,
+      ...customProps
+    })
+
+    if(shape){
+      shape.id = `${shapeType}-${Date.now()}`;
+      canvas.add(shape);
+      canvas.renderAll();
+      canvas.setActiveObject(shape);
+      return shape;
+    }
+    return null;
+  } catch (error) {
+    console.error("Failed to add shape to canvas",error);
+    return null;
+  }
+}
