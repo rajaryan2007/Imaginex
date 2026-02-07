@@ -44,7 +44,7 @@ export const centerCanvas = (canvas) => {
 
 
 export const addShapeToCanvas = async (canvas,shapeType,customProps={})=>{
-  if(!shapeType) return null; 
+  if(!canvas || !shapeType) return null; 
   try {
     const fabricModule = await import('fabric');
     
@@ -67,3 +67,50 @@ export const addShapeToCanvas = async (canvas,shapeType,customProps={})=>{
     return null;
   }
 }
+
+
+export const addTextToCanvas = async (canvas, textType, customProps = {},withBackground=false) => {
+  if (!canvas || !textType) return null;
+
+  try {   
+    const { Textbox } = await import('fabric');
+
+    let textObject;
+    const baseProps = {
+      left: 100,
+      top: 100,
+      fill: '#000000',
+      fontFamily: 'Arial',
+      fontSize: 24,
+      fontWeight: 'normal',
+      textAlign: 'left',
+      charSpacing: 0,
+      lineHeight: 1.2,
+      backgroundColor: 'transparent',
+      stroke: null,
+      strokeWidth: 0,
+      shadow: null,
+      
+      ...customProps
+    };
+
+    textObject = new Textbox(textType,{
+      ...baseProps,
+      width: 200,
+      height: 100,
+    });
+
+    if (textObject) {
+      textObject.id = `text-${Date.now()}`;
+      canvas.add(textObject);
+      canvas.setActiveObject(textObject);
+      canvas.renderAll();
+      return textObject;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Failed to add text to canvas", error);
+    return null;
+  }
+};
