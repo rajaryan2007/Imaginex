@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toggleDrawingMode, toggleEraseMode, updateDrawingBrush } from "@/fabric/fabric-utils";
 import { useEditorStore } from "@/store/store";
 
 import {
   BrushIcon,
+  Droplets,
   EraserIcon,
   Minus,
   Palette,
@@ -79,15 +81,48 @@ function DrawPanel() {
     const newMode = !isDrawingMode;
     setIsDrawingMode(newMode);
 
-    if (newMode && isErasing) {
+    if (newMode && isEraserMode) {
       setIsEraserMode(false);
     }
+
+    toggleDrawingMode(canvas,newMode,drawingColor,brushWidth);
   };
 
   const handleDrawColorChange = (color) => {
     setDrawingColor(color);
+
+    if(canvas && isDrawingMode && !isEraserMode){
+      updateDrawingBrush(canvas,{color})
+    }
+  };
+  
+  const handleBrushWidthChange = (width)=>{
+    setBrushWidth(width);
+
+    if(canvas && isDrawingMode){
+      updateDrawingBrush(canvas,{width:isEraserMode ? width*2 : width })
+    }
   };
 
+  const handleDrawingOpacityChange = (value) => {
+    
+    const opacity = Number(value[0])
+    setDrawingOpacity(opacity)
+
+    if(canvas && isDrawingMode){
+      updateDrawingBrush(canvas,{opacity: opacity/100})
+    }
+  };
+
+  const handleToggleErasing = () => {
+    if(!canvas && !isDrawingMode) return;
+    
+    const newErasing = !isEraserMode
+    setIsEraserMode(newErasing);
+
+    toggleEraseMode(canvas,newErasing,drawingColor,brushWidth * 2 )
+
+  } 
   return (
     <div className="p-4">
       <div className="space-y-5">
@@ -214,14 +249,40 @@ function DrawPanel() {
                 </div>
                 <div className="grid grid-cols-5 gap-3 ">
                   {brushSize.map((size) => (
-                    <Button className="w-10 h-10  rounded-full border shadow-sm transition-colors"
-                    onClick={()=>{setBrushWidth(size.value)}}
+                    <Button
+                    className="w-10 h-10  rounded-full border shadow-sm transition-colors"
+                    variant={size.value === brushWidth ? "default" : "outline"}  
+                    onClick={()=>handleBrushWidthChange(size.value)}
                     key={size.value}>{size.value}</Button>
                   ))}
                 </div>
+                 <div className="space-y-2 mt-4" >
+                  <div className="flex justify-between">
+                    <Label className={"font-medium"} >
+                      <Droplets className="mr-2 h-4 w-4"/>
+                      Opacity</Label>
+                      <span className="text-sm font-medium">
+                        {drawingOpacity}%
+                      </span>
+                  </div>
+                  <Slider
+                  value={[drawingOpacity]}
+                  min={1}
+                  max={100}
+                  step={1}
+                  onValueChange={(value)=> handleDrawingOpacityChange(value)}
+                   />                 
+                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="eraser"></TabsContent>
+            <TabsContent value="eraser" className="space-y-4">
+              <Button onClick={handleToggleErasing} className="max-h-200 max-w-500" variant={isEraserMode ? "destructive" : "outline"}>
+                <BrushIcon className="mr-2 w-5 h-5" />
+                {
+                  isEraserMode ? 'Stop Erasing' : 'Eraser mode'
+                }
+              </Button>
+            </TabsContent>
           </Tabs>
         }
       </div>
