@@ -13,13 +13,6 @@ import { ArrowDown01 } from "lucide-react";
 function MainEditor() {
   const params = useParams();
   const router = useRouter();
-  
-  // DEBUGGING LOGS
-  console.log("------------------------------------------------");
-  console.log(" EDITOR COMPONENT MOUNTED");
-  console.log("Params received:", params);
-  console.log("Design ID received:", params?.slug);
-  console.log("------------------------------------------------");
 
   const designId = params?.slug;
 
@@ -27,7 +20,7 @@ function MainEditor() {
   const [loadAttempted, setloadAttempted] = useState(false);
   const [error, setError] = useState(null);
 
-  const { canvas, setDesignId, resetStore ,setName} = useEditorStore();
+  const { canvas, setDesignId, resetStore, setName } = useEditorStore();
 
   useEffect(() => {
     resetStore();
@@ -75,8 +68,8 @@ function MainEditor() {
     try {
       setIsLoading(true);
       setloadAttempted(true);
-      
-      
+
+
 
       const response = await getUserDesignID(designId);
       const design = response.data;
@@ -90,7 +83,7 @@ function MainEditor() {
       try {
         if (design.canvasData) {
           fabricInstance.clear();
-          
+
           if (design.width && design.height) {
             fabricInstance.setDimensions({
               width: design.width,
@@ -108,7 +101,7 @@ function MainEditor() {
 
           const bgColor = canvasData.background || "#000000";
           console.log("Setting background to:", bgColor);
-          
+
           fabricInstance.set("backgroundColor", bgColor);
           fabricInstance.renderAll();
 
@@ -122,7 +115,7 @@ function MainEditor() {
           try {
             const { util } = await import('fabric');
             const enlivenedObjects = await util.enlivenObjects(canvasData.objects);
-            
+
             // Add all objects to the canvas
             enlivenedObjects.forEach(obj => {
               fabricInstance.add(obj);
@@ -130,7 +123,7 @@ function MainEditor() {
           } catch (err) {
             console.error('Error enlivening objects:', err);
           }
-          
+
           fabricInstance.requestRenderAll();
           fabricInstance.calcOffset();
         } else {

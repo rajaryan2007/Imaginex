@@ -27,7 +27,7 @@ const getProxyOptions = (apiPrefix) => ({
 });
 
 
-app.use('/v1/media', proxy(process.env.UPLOAD, getProxyOptions('/api/media')));
+app.use('/v1/media', authMiddleware, proxy(process.env.UPLOAD, getProxyOptions('/api/media')));
 
 app.use('/v1/designs', (req, res, next) => {
   console.log(`[Route] ${req.method} ${req.originalUrl} matched /v1/designs`);
