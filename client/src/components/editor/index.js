@@ -107,7 +107,7 @@ function MainEditor() {
           const hasObjects = canvasData.objects && canvasData.objects.length > 0;
 
 
-          const bgColor = canvasData.background || "#000000";
+          const bgColor = canvasData.background || "#ffffff";
           console.log("Setting background to:", bgColor);
 
           fabricInstance.set("backgroundColor", bgColor);
@@ -196,17 +196,34 @@ function MainEditor() {
   }, [canvas, designId, loadDesign, loadAttempted, router]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-slate-50 relative">
-      <Header />
-      <div className="flex flex-1 overflow-hidden">
-        {isEditing && <Sidebar />}
-        <main className={`flex-1 relative overflow-hidden flex items-center justify-center p-8 transition-all duration-300 ease-in-out ${showProperties ? 'mr-[280px]' : ''}`}>
-          <div className="w-full h-full bg-slate-200 rounded-xl shadow-sm border overflow-hidden flex items-center justify-center">
-            <Canvas />
-          </div>
-        </main>
+    <div className="h-screen w-screen overflow-hidden relative canvas-grid-light text-slate-800">
+      <main className="absolute inset-0 z-0 flex items-center justify-center overflow-auto p-8">
+        <div className="shadow-[0_20px_50px_rgba(8,_112,_184,_0.07)] ring-1 ring-slate-900/5 bg-white relative rounded-sm">
+           <Canvas />
+        </div>
+      </main>
+
+      <div className="absolute top-3 left-0 right-0 z-50 flex justify-center pointer-events-none">
+        <div className="pointer-events-auto w-full max-w-5xl">
+          <Header />
+        </div>
       </div>
-      {showProperties && isEditing && <Properties />}
+
+      {isEditing && (
+        <div className="absolute left-3 top-20 bottom-3 z-40 flex pointer-events-none">
+          <div className="pointer-events-auto">
+            <Sidebar />
+          </div>
+        </div>
+      )}
+
+      {showProperties && isEditing && (
+        <div className="absolute right-3 top-20 bottom-3 z-40 pointer-events-none">
+          <div className="pointer-events-auto h-full">
+            <Properties />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

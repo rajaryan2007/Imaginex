@@ -32,7 +32,7 @@ export async function uploadFileWithAuth(file, metaData = {}) {
     }
 }
 
-export async function generateImageFromAI(prompt) {
+export async function generateImageFromAI(prompt, width = 1024, height = 1024) {
     const session = await getSession();
     if (!session) {
         throw new Error("No session found");
@@ -45,7 +45,7 @@ export async function generateImageFromAI(prompt) {
                 "Authorization": `Bearer ${session.idToken}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ prompt })
+            body: JSON.stringify({ prompt, width, height })
         });
         console.log("[AI Gen] Prompt sent:", prompt);
         console.log("[AI Gen] Response status:", response.status);

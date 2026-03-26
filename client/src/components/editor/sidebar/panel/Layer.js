@@ -63,7 +63,7 @@ function LayerPanel() {
     const handleToggleLock = (e, obj) => {
         e.stopPropagation();
         const isLocked = obj.lockMovementX; // using lockMovementX as truth source
-        
+
         obj.set({
             lockMovementX: !isLocked,
             lockMovementY: !isLocked,
@@ -74,7 +74,7 @@ function LayerPanel() {
             selectable: isLocked,
             evented: isLocked // disables clicking completely if true
         });
-        
+
         if (!isLocked && canvas.getActiveObject() === obj) {
             canvas.discardActiveObject();
         }
@@ -119,12 +119,12 @@ function LayerPanel() {
     const getNameForLayer = (obj) => {
         // Support custom names mapping later
         if (obj.name) return obj.name;
-        
+
         switch (obj.type) {
             case 'image': return 'Image Layer';
-            case 'textbox': 
+            case 'textbox':
             case 'i-text':
-            case 'text': 
+            case 'text':
                 return obj.text ? `Text: ${obj.text.substring(0, 10)}${obj.text.length > 10 ? '...' : ''}` : 'Text Layer';
             case 'rect': return 'Rectangle';
             case 'circle': return 'Circle';
@@ -134,13 +134,13 @@ function LayerPanel() {
     }
 
     return (
-        <div className="flex flex-col h-full bg-white w-[280px]">
-            <div className="p-4 border-b">
-                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                    <Layers className="w-5 h-5 text-gray-500" />
+        <div className="flex flex-col h-full bg-transparent w-full">
+            <div className="p-4 border-b border-slate-200/60 bg-white/50">
+                <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-slate-500" />
                     Layers
                 </h3>
-                <p className="text-xs text-gray-500 mt-1">Manage canvas objects stack</p>
+                <p className="text-xs text-slate-500 mt-1">Manage canvas objects stack</p>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
@@ -156,54 +156,54 @@ function LayerPanel() {
                             const isLocked = layer.lockMovementX; // if one is locked, we assume locked
 
                             return (
-                                <div 
+                                <div
                                     key={layer.id || index}
                                     onClick={() => !isLocked && handleSelectLayer(layer)}
                                     className={`
-                                        flex items-center justify-between p-2 rounded-md cursor-pointer text-sm
+                                        flex items-center justify-between p-2 rounded-xl cursor-pointer text-sm mb-1
                                         transition-colors group
-                                        ${isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50 border border-transparent'}
+                                        ${isSelected ? 'bg-white shadow-sm ring-1 ring-slate-200' : 'hover:bg-white/50'}
                                         ${isLocked ? 'opacity-60 grayscale cursor-not-allowed' : ''}
                                     `}
                                 >
                                     <div className="flex items-center gap-3 overflow-hidden">
-                                        <button 
+                                        <button
                                             onClick={(e) => handleToggleVisibility(e, layer)}
-                                            className="text-gray-400 hover:text-gray-700 p-1 rounded-sm flex-shrink-0"
+                                            className="text-slate-400 hover:text-slate-700 p-1 rounded-md flex-shrink-0 hover:bg-slate-100"
                                             title={layer.visible !== false ? "Hide Layer" : "Show Layer"}
                                         >
                                             {layer.visible !== false ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                         </button>
-                                        
-                                        <div className="flex items-center justify-center w-6 h-6 bg-gray-100 rounded flex-shrink-0">
+
+                                        <div className="flex items-center justify-center w-8 h-8 bg-slate-100/50 rounded-lg flex-shrink-0">
                                             {getIconForType(layer.type)}
                                         </div>
 
-                                        <span className={`truncate flex-1 font-medium ${isSelected ? 'text-blue-700' : 'text-gray-700'}`}>
+                                        <span className={`truncate flex-1 font-medium ${isSelected ? 'text-blue-700' : 'text-slate-700'}`}>
                                             {getNameForLayer(layer)}
                                         </span>
                                     </div>
 
                                     {/* Actions shown entirely on hover */}
                                     <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        
-                                        <button 
+
+                                        <button
                                             onClick={(e) => handleToggleLock(e, layer)}
                                             className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-sm"
                                             title={isLocked ? "Unlock Layer" : "Lock Layer"}
                                         >
                                             {isLocked ? <Lock className="w-3.5 h-3.5 text-gray-600" /> : <Unlock className="w-3.5 h-3.5" />}
                                         </button>
-                                        
+
                                         <div className="flex flex-col gap-0.5 mx-0.5">
-                                            <button 
+                                            <button
                                                 onClick={(e) => handleMoveUp(e, layer)}
                                                 disabled={index === 0}
                                                 className={`p-[2px] rounded-sm ${index === 0 ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-200'}`}
                                             >
                                                 <ArrowUp className="w-3 h-3" strokeWidth={3} />
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={(e) => handleMoveDown(e, layer)}
                                                 disabled={index === layers.length - 1}
                                                 className={`p-[2px] rounded-sm ${index === layers.length - 1 ? 'text-gray-300' : 'text-gray-500 hover:bg-gray-200'}`}
@@ -212,7 +212,7 @@ function LayerPanel() {
                                             </button>
                                         </div>
 
-                                        <button 
+                                        <button
                                             onClick={(e) => handleDelete(e, layer)}
                                             className="p-1 text-red-400 hover:text-red-700 hover:bg-red-100 rounded-sm"
                                             title="Delete Layer"

@@ -41,14 +41,14 @@ function Header() {
   }
 
   if (!mounted) {
-    return <header className="header-gradient header flex items-center justify-between px-4 h-14" />;
+    return <header className="glass-panel rounded-2xl flex items-center justify-between px-6 h-14" />;
   }
 
-  return <header className="header-gradient header flex items-center justify-between px-4 h-14">
+  return <header className="glass-panel flex items-center justify-between px-6 h-14 rounded-2xl w-full mx-auto">
     <div className="flex items-center space-x-2" >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="header-button flex items-center text-white">
+          <button className="flex items-center text-slate-700 hover:text-slate-900 font-medium transition-colors px-2 py-1 rounded-md hover:bg-slate-100">
             <span>{isEditing ? 'Editing' : 'Viewing'}</span>
             <ChevronDown className="ml-1 h-4 w-4" />
           </button>
@@ -72,12 +72,12 @@ function Header() {
       </DropdownMenu>
     </div>
     <div>
-      <button className="header-button relative" title="save" >
+      <button className="flex items-center justify-center w-8 h-8 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors relative" title="save" >
         <Save className="w-5 h-5" />
       </button>
     </div>
     <div>
-      <button onClick={() => { handleDownload() }} className="header-button relative" title="save" >
+      <button onClick={() => { handleDownload() }} className="flex items-center justify-center w-8 h-8 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors relative" title="download" >
         <Download className="w-5 h-5" />
       </button>
     </div>
@@ -85,13 +85,13 @@ function Header() {
       <Input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full"
+        className="w-full bg-slate-100/50 border-transparent focus:bg-white focus:border-blue-500 transition-colors shadow-none"
       />
     </div>
     <div className="flex items-center space-x-3">
-      <button className="upgrade-button flex items-center bg-white/10 hover:bg-white/20 text-white rounded-md h-9 px-3 transition-colors">
-        <Star className="mr-1 h-4 w-4 text-yellow-400" />
-        Upgrade-your-plan
+      <button className="flex items-center bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium rounded-full h-9 px-4 transition-colors">
+        <Star className="mr-1.5 h-4 w-4 text-orange-400 fill-orange-400" />
+        Upgrade Plan
       </button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

@@ -125,10 +125,10 @@ function Properties() {
 
     const handleFilterChange = (filterName, value) => {
         if (!selectedObject || selectedObject.type !== 'image') return;
-        
+
         const newFiltersState = { ...properties.filters, [filterName]: value };
         const activeFilters = [];
-        
+
         if (newFiltersState.brightness !== 0) {
             activeFilters.push(new filters.Brightness({ brightness: newFiltersState.brightness }));
         }
@@ -144,11 +144,11 @@ function Properties() {
         if (newFiltersState.invert) {
             activeFilters.push(new filters.Invert());
         }
-        
+
         selectedObject.filters = activeFilters;
         selectedObject.applyFilters();
         canvas.requestRenderAll();
-        
+
         setProperties(prev => ({ ...prev, filters: newFiltersState }));
     };
 
@@ -205,10 +205,10 @@ function Properties() {
     if (!selectedObject) return null;
 
     return (
-        <div className="fixed right-0 top-[56px] bottom-0 w-[280px] bg-white border-l border-gray-200 shadow-lg p-5 z-10 overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b mb-6">
+        <div className="w-[300px] h-full glass-panel rounded-2xl p-5 z-10 overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200/60 mb-6">
                 <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-gray-800 uppercase tracking-wide">Properties</span>
+                    <span className="text-sm font-semibold text-slate-800 uppercase tracking-wide">Properties</span>
                     <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full capitalize">{objectType}</span>
                 </div>
             </div>

@@ -4,6 +4,8 @@ const Media = require("../models/media");
 
 const GenerateImageFromAiAndUpload = async (req, res) => {
     const prompt = req.body.prompt;
+    const width = req.body.width || 1024;
+    const height = req.body.height || 1024;
     const userId = req.user?.userId || req.headers['x-user-id'];
 
     if (!prompt) {
@@ -17,7 +19,7 @@ const GenerateImageFromAiAndUpload = async (req, res) => {
     console.log(`[AI Image] Generating image for user: ${userId}, prompt: "${prompt}"`);
 
     try {
-        const imageUrl = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=flux&width=1024&height=1024&seed=-1`;
+        const imageUrl = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=flux&width=${width}&height=${height}&seed=-1`;
 
         console.log(`[AI Image] Requesting: ${imageUrl}`);
 
