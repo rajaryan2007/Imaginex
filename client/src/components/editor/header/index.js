@@ -4,21 +4,39 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useEditorStore } from "@/store/store"
+
 import { useSession, signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } = require("@/components/ui/dropdown-menu")
 const { ChevronDown, Pencil, Eye, Save, LogOut, Star } = require("lucide-react")
 
 function Header() {
-  
-  const { isEditing, setIsEditing, name, setName } = useEditorStore();
+
+  const { isEditing, setIsEditing, name, setName, canvas } = useEditorStore();
   const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = () => {
     signOut();
   }
 
-  
+  useEffect(() => {
+    if (!canvas) return;
+    canvas.selection = isEditing;
+    canvas.getObjects().forEach((obj) => {
+      obj.selectable = isEditing;
+      obj.evented = isEditing;
+    })
+  }, [isEditing, canvas]);
+
+  if (!mounted) {
+    return <header className="header-gradient header flex items-center justify-between px-4 h-14" />;
+  }
 
   return <header className="header-gradient header flex items-center justify-between px-4 h-14">
     <div className="flex items-center space-x-2" >

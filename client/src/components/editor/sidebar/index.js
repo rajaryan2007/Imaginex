@@ -6,9 +6,10 @@ import TextPanel from "./panel/text";
 import AIPanel from "./panel/AI";
 import { useState } from "react";
 import DrawPanel from "./panel/draw";
-import { ArrowLeft, ChevronLeft, Grid, Pencil, Settings, Sparkle, Type, Upload } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Grid, Layers, Pencil, Settings, Sparkle, Type, Upload } from "lucide-react";
 import SettingPanel from "./panel/settings";
 import UploadPanel from "./panel/upload";
+import LayerPanel from "./panel/Layer";
 
 
 function Sidebar() {
@@ -52,6 +53,12 @@ function Sidebar() {
       label: "Setting",
       panel: () => <SettingPanel />
     },
+    {
+      id: "layer",
+      icon: Layers,
+      label: "Layer",
+      panel: () => <LayerPanel />
+    }
   ]
 
   const handleItemClick = (id) => {

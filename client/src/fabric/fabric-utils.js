@@ -1,3 +1,4 @@
+import { Erica_One } from 'next/font/google'
 import { shapeDefinations } from './shapes/shape-definations'
 import { createShape } from './shapes/shape-factory'
 
@@ -164,5 +165,49 @@ export const updateDrawingBrush = (canvas,properties = {})=>{
     return true;
   } catch (error) {
     return false;
+  }
+}
+
+export const addImageToCanvas = async(canvas,ImageUrl)=>{
+  if(!canvas) return null;
+
+  try {
+    const {Image:FabricImage} = await import('fabric');
+    
+    let imgObj = new Image();
+    imgObj.crossOrigin = "anonymous";
+    imgObj.src = ImageUrl;
+
+    return new Promise((resolve,reject)=>{
+      imgObj.onload = () => {
+         let image = new FabricImage(imgObj)
+         image.set({
+          id:`image-${Date.now()}`,
+          left: 100,
+          top: 100,
+          padding: 10,
+          cornorSize: 10
+         })
+
+         const maxDimension = 400;
+
+         if(image.width > maxDimension || image.height > maxDimension){
+          image.scaleToWidth(maxDimension);
+          image.scaleToHeight(maxDimension);
+         }
+         canvas.add(image);
+         canvas.renderAll();
+         resolve(image);
+      }
+      imgObj.onerror = (error) => {
+        reject(new Error("Failed to load image",ImageUrl));
+      }
+    })
+
+  } catch (error) {
+    console.log("error while rendering image in canvas");
+    
+
+    return null
   }
 }

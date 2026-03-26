@@ -20,6 +20,8 @@ const getProxyOptions = (apiPrefix) => ({
     return newPath;
   },
 
+  timeout: 120000,
+
   proxyErrorHandler: (err, res, next) => {
     console.error(`[Proxy Error] ${err.message}`);
     res.status(500).json({ message: 'Internal server error!', error: err.message });

@@ -31,7 +31,8 @@ const uploadMedia = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({ success: false, message: "Failed to upload media" })
+        console.error("Error in uploadMedia:", error);
+        res.status(500).json({ success: false, message: "Failed to upload media", error: error.message })
     }
 }
 
@@ -41,7 +42,8 @@ const getAllMediaByUserId = async (req, res) => {
         const media = await Media.find({ userId: userId }).sort({ createdAt: -1 });
         return res.status(200).json({ success: true, media })
     } catch (error) {
-        res.status(500).json({ success: false, message: "Failed to get media" })
+        console.error("Error in getAllMediaByUserId:", error);
+        res.status(500).json({ success: false, message: "Failed to get media", error: error.message })
     }
 }
 

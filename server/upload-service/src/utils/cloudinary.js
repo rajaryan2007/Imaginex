@@ -18,7 +18,7 @@ const uploadMediaToCloudinary = async (file) => {
             }
             resolve(result)
         })
-        uploadStream.end(file.buffer)
+        uploadStream.end(file)
     })
 
 }

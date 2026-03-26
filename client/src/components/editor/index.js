@@ -10,6 +10,9 @@ import { useEditorStore } from "@/store/store";
 import { getUserDesignID } from "@/service/design-service";
 import { ArrowDown01 } from "lucide-react";
 
+
+import Properties from "./properties";
+
 function MainEditor() {
   const params = useParams();
   const router = useRouter();
@@ -19,8 +22,7 @@ function MainEditor() {
   const [isLoading, setIsLoading] = useState(!!designId);
   const [loadAttempted, setloadAttempted] = useState(false);
   const [error, setError] = useState(null);
-
-  const { canvas, setDesignId, resetStore, setName } = useEditorStore();
+  const { canvas, isEditing, setDesignId, resetStore, setName, showProperties, setShowProperties } = useEditorStore();
 
   useEffect(() => {
     resetStore();
@@ -62,6 +64,12 @@ function MainEditor() {
     // 2. Check if we have the real instance and it has the required methods
     if (!fabricInstance || typeof fabricInstance.clear !== "function") {
       console.warn("Canvas is not a valid Fabric instance yet, skipping loadDesign");
+      return;
+    }
+
+
+    if (!fabricInstance.contextContainer && !fabricInstance.getContext?.()) {
+      console.warn("Canvas rendering context is destroyed, skipping loadDesign");
       return;
     }
 
@@ -152,11 +160,35 @@ function MainEditor() {
   }, [canvas, designId, loadAttempted, setDesignId]);
 
   useEffect(() => {
+    if (!canvas) return
+
+    const handleSelectionCreated = (e) => {
+      const activeObject = canvas.getActiveObject();
+      console.log("Active object:", activeObject);
+      if (activeObject) {
+        setShowProperties(true)
+      }
+    }
+
+    const handleSelectionCleared = (e) => {
+      setShowProperties(false)
+    }
+
+    canvas.on("selection:created", handleSelectionCreated)
+    canvas.on("selection:cleared", handleSelectionCleared)
+
+    return () => {
+      canvas.off("selection:created", handleSelectionCreated)
+      canvas.off("selection:cleared", handleSelectionCleared)
+    }
+  }, [canvas])
+
+  useEffect(() => {
     const init = async () => {
       if (designId && canvas && !loadAttempted) {
         await loadDesign();
       } else if (!designId) {
-        console.warn("⚠️ Editor: No Design ID found. Redirecting to home...");
+        console.warn(" Editor: No Design ID found. Redirecting to home...");
         router.replace("/");
       }
     };
@@ -164,16 +196,17 @@ function MainEditor() {
   }, [canvas, designId, loadDesign, loadAttempted, router]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-slate-50">
+    <div className="flex flex-col h-screen overflow-hidden bg-slate-50 relative">
       <Header />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 relative overflow-hidden flex items-center justify-center p-8">
+        {isEditing && <Sidebar />}
+        <main className={`flex-1 relative overflow-hidden flex items-center justify-center p-8 transition-all duration-300 ease-in-out ${showProperties ? 'mr-[280px]' : ''}`}>
           <div className="w-full h-full bg-slate-200 rounded-xl shadow-sm border overflow-hidden flex items-center justify-center">
             <Canvas />
           </div>
         </main>
       </div>
+      {showProperties && isEditing && <Properties />}
     </div>
   );
 }

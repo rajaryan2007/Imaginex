@@ -4,12 +4,12 @@ const mediaSchema = new mongoose.Schema({
     userId: String,
     name: String,
     cloudinaryId: String,
-    url: Date,
+    url: String,
     mimeType: String,
     size: Number,
     width: Number,
     height: Number,
-    createAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     }
