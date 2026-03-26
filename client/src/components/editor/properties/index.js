@@ -2,9 +2,10 @@
 
 import { useEditorStore } from "@/store/store";
 import { useEffect, useState } from "react";
-import { Shadow } from "fabric";
+import { Shadow, filters } from "fabric";
 import TransformSection from "./TransformSection";
 import TextSection from "./TextSection";
+import ImageSection from "./ImageSection";
 import ActionsSection from "./ActionsSection";
 import StyleSection from "./StyleSection";
 
@@ -20,6 +21,7 @@ function Properties() {
         underline: false, linethrough: false, textAlign: 'left', lineHeight: 1.16, charSpacing: 0,
         rx: 0, ry: 0,
         shadowColor: '#000000', shadowBlur: 0, shadowOffsetX: 0, shadowOffsetY: 0,
+        filters: { brightness: 0, contrast: 0, blur: 0, grayscale: false, invert: false }
     });
 
     const isTextObject = objectType === 'textbox' || objectType === 'i-text' || objectType === 'text';
@@ -50,6 +52,13 @@ function Properties() {
                     rx: obj.rx || 0, ry: obj.ry || 0,
                     shadowColor: shadow.color || '#000000', shadowBlur: shadow.blur || 0,
                     shadowOffsetX: shadow.offsetX || 0, shadowOffsetY: shadow.offsetY || 0,
+                    filters: obj.type === 'image' ? {
+                        brightness: (obj.filters || []).find(f => f.type === 'Brightness')?.brightness || 0,
+                        contrast: (obj.filters || []).find(f => f.type === 'Contrast')?.contrast || 0,
+                        blur: (obj.filters || []).find(f => f.type === 'Blur')?.blur || 0,
+                        grayscale: !!(obj.filters || []).find(f => f.type === 'Grayscale'),
+                        invert: !!(obj.filters || []).find(f => f.type === 'Invert')
+                    } : { brightness: 0, contrast: 0, blur: 0, grayscale: false, invert: false }
                 });
             } else {
                 setSelectedObject(null);
@@ -112,6 +121,35 @@ function Properties() {
         selectedObject.set('shadow', newShadow);
         canvas.requestRenderAll();
         setProperties(prev => ({ ...prev, [prop]: value }));
+    };
+
+    const handleFilterChange = (filterName, value) => {
+        if (!selectedObject || selectedObject.type !== 'image') return;
+        
+        const newFiltersState = { ...properties.filters, [filterName]: value };
+        const activeFilters = [];
+        
+        if (newFiltersState.brightness !== 0) {
+            activeFilters.push(new filters.Brightness({ brightness: newFiltersState.brightness }));
+        }
+        if (newFiltersState.contrast !== 0) {
+            activeFilters.push(new filters.Contrast({ contrast: newFiltersState.contrast }));
+        }
+        if (newFiltersState.blur > 0) {
+            activeFilters.push(new filters.Blur({ blur: newFiltersState.blur }));
+        }
+        if (newFiltersState.grayscale) {
+            activeFilters.push(new filters.Grayscale());
+        }
+        if (newFiltersState.invert) {
+            activeFilters.push(new filters.Invert());
+        }
+        
+        selectedObject.filters = activeFilters;
+        selectedObject.applyFilters();
+        canvas.requestRenderAll();
+        
+        setProperties(prev => ({ ...prev, filters: newFiltersState }));
     };
 
     const handleCornerRadius = (value) => {
@@ -181,6 +219,10 @@ function Properties() {
                 {isTextObject && (
                     <TextSection properties={properties} onChange={handlePropertyChange}
                         onTextToggle={handleTextToggle} onBoolToggle={handleBoolToggle} />
+                )}
+
+                {objectType === 'image' && (
+                    <ImageSection filters={properties.filters} onChange={handleFilterChange} />
                 )}
 
                 <ActionsSection properties={properties} onLayerAction={handleLayerAction}
