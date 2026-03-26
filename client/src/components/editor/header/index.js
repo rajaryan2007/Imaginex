@@ -7,15 +7,17 @@ import { useEditorStore } from "@/store/store"
 
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import ExportModel from "../export";
 
 const { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } = require("@/components/ui/dropdown-menu")
-const { ChevronDown, Pencil, Eye, Save, LogOut, Star } = require("lucide-react")
+const { ChevronDown, Pencil, Eye, Save, LogOut, Star, Download } = require("lucide-react")
 
 function Header() {
 
   const { isEditing, setIsEditing, name, setName, canvas } = useEditorStore();
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -33,6 +35,10 @@ function Header() {
       obj.evented = isEditing;
     })
   }, [isEditing, canvas]);
+
+  const handleDownload = () => {
+    setExportOpen(true);
+  }
 
   if (!mounted) {
     return <header className="header-gradient header flex items-center justify-between px-4 h-14" />;
@@ -70,6 +76,11 @@ function Header() {
         <Save className="w-5 h-5" />
       </button>
     </div>
+    <div>
+      <button onClick={() => { handleDownload() }} className="header-button relative" title="save" >
+        <Download className="w-5 h-5" />
+      </button>
+    </div>
     <div className="flex-1 flex justify-center max-w-md" >
       <Input
         value={name}
@@ -103,6 +114,9 @@ function Header() {
       </DropdownMenu>
 
     </div>
+    {exportOpen && (
+      <ExportModel open={exportOpen} onOpenChange={setExportOpen} />
+    )}
   </header>
 }
 
