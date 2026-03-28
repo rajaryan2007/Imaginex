@@ -1,5 +1,5 @@
 const axios = require("axios");
-const {uploadMediaToCloudinary} = require("../utils/cloudinary");
+const { uploadMediaToCloudinary } = require("../utils/cloudinary");
 const Media = require("../models/media");
 
 const GenerateImageFromAiAndUpload = async (req, res) => {
@@ -27,7 +27,7 @@ const GenerateImageFromAiAndUpload = async (req, res) => {
             responseType: 'arraybuffer',
             timeout: 120000,
             headers: {
-                'Authorization': `Bearer ${process.env["Image-API"] || ''}`
+                'Authorization': `Bearer ${process.env["Image_API"] || ''}`
             }
         });
 
@@ -53,7 +53,7 @@ const GenerateImageFromAiAndUpload = async (req, res) => {
         });
 
         await newlyCreatedMedia.save();
-        
+
         return res.status(200).json({
             success: true,
             message: "Media uploaded successfully",
@@ -73,4 +73,4 @@ const GenerateImageFromAiAndUpload = async (req, res) => {
     }
 }
 
-module.exports = {GenerateImageFromAiAndUpload};
+module.exports = { GenerateImageFromAiAndUpload };
