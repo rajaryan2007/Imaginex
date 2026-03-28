@@ -41,14 +41,18 @@ const getProxyOptions = (apiPrefix) => ({
 });
 
 
-app.use('/v1/media', authMiddleware, proxy(process.env.UPLOAD, getProxyOptions('/api/media')));
+const UPLOAD_URL = process.env.UPLOAD || 'http://localhost:5002';
+const DESIGN_URL = process.env.DESIGN || 'http://localhost:5001';
+const SUBSCRIPTION_URL = process.env.SUBSCRIPTION || 'http://localhost:5003';
+
+app.use('/v1/media', authMiddleware, proxy(UPLOAD_URL, getProxyOptions('/api/media')));
 
 app.use('/v1/designs', (req, res, next) => {
   console.log(`[Route] ${req.method} ${req.originalUrl} matched /v1/designs`);
   next();
-}, authMiddleware, proxy(process.env.DESIGN, getProxyOptions('/api/designs')));
+}, authMiddleware, proxy(DESIGN_URL, getProxyOptions('/api/designs')));
 
-app.use('/v1/subscription', authMiddleware, proxy(process.env.SUBSCRIPTION, getProxyOptions('/api/subscription')));
+app.use('/v1/subscription', authMiddleware, proxy(SUBSCRIPTION_URL, getProxyOptions('/api/subscription')));
 
 
 app.use(express.json());
@@ -56,7 +60,7 @@ app.use(express.json());
 
 app.listen(PORT, () => {
   console.log(`API gateway is running on port ${PORT}`);
-  console.log(` UPLOAD Service is running on port ${process.env.UPLOAD}`);
-  console.log(`DESIGN Service is running on port ${process.env.DESIGN}`);
-  console.log(`SUBSCRIPTION Service is running on port ${process.env.SUBSCRIPTION}`);
+  console.log(`UPLOAD Service is running on port ${UPLOAD_URL}`);
+  console.log(`DESIGN Service is running on port ${DESIGN_URL}`);
+  console.log(`SUBSCRIPTION Service is running on port ${SUBSCRIPTION_URL}`);
 });
