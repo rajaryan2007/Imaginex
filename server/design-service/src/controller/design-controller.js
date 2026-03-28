@@ -3,14 +3,20 @@ const Design = require("../models/design")
 exports.getUserDesigns = async (req, res) => {
     try {
         const userId = req.user.userId;
+        console.log("[getUserDesigns] userId:", userId);
+        console.log("[getUserDesigns] headers:", JSON.stringify({
+            'x-user-id': req.headers['x-user-id'],
+            'x-user-email': req.headers['x-user-email'],
+        }));
         const design = await Design.find({ userId }).sort({ updateAt: -1 });
+        console.log("[getUserDesigns] found", design.length, "designs");
 
         return res.status(200).json({
             success: true,
             data: design,
         })
     } catch (error) {
-        console.error("Error Fetcting design", error)
+        console.error("Error Fetching design", error)
         res.status(500).json({
             success: false,
             message: "Failed to fetch designs"
@@ -127,4 +133,6 @@ exports.deleteDesign = async(req,res)=>{
 
 
 }
+
+
 

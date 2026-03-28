@@ -11,7 +11,11 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 app.use(helmet());
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({ 
+  origin: allowedOrigins,
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-user-email', 'x-user-name']
+}));
 
 const getProxyOptions = (apiPrefix) => ({
   proxyReqPathResolver: (req) => {

@@ -15,13 +15,13 @@ const textPresents = [
 
 function TextPanel() {
   
-  const { canvas} = useEditorStore();
+  const { canvas, markAsModified } = useEditorStore();
  
   const handleAddCustomText = () => {
     if (!canvas) return;
     
     addTextToCanvas(canvas, 'Custom Text' ,{fontSize:24,fontWeight:"bold"});
-
+    markAsModified();
   }
 
   return <div className="h-full overflow-y-auto " >
@@ -37,7 +37,10 @@ function TextPanel() {
         <div className="space-y-2">
           {
             textPresents.map((text) => (
-              <Button key={text.id} onClick={() => addTextToCanvas(canvas, "custom text", {fontSize: text.fontSize,fontWeight: text.fontWeight})} className={`w-full py-3 px-4 ${text.style} hover:bg-purple-700 text-white rounded-md flex items-center justify-center transition-colors`}>
+              <Button key={text.id} onClick={() => {
+                  addTextToCanvas(canvas, "custom text", {fontSize: text.fontSize,fontWeight: text.fontWeight});
+                  markAsModified();
+                }} className={`w-full py-3 px-4 ${text.style} hover:bg-purple-700 text-white rounded-md flex items-center justify-center transition-colors`}>
                 <Type className="mr-2 h-5 w-5" />
                 <span className="font-medium" >{text.name}</span>
               </Button>

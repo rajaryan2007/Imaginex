@@ -22,7 +22,7 @@ function MainEditor() {
   const [isLoading, setIsLoading] = useState(!!designId);
   const [loadAttempted, setloadAttempted] = useState(false);
   const [error, setError] = useState(null);
-  const { canvas, isEditing, setDesignId, resetStore, setName, showProperties, setShowProperties } = useEditorStore();
+  const { canvas, isEditing, setDesignId, resetStore, setName, showProperties, setShowProperties, markAsModified } = useEditorStore();
 
   useEffect(() => {
     resetStore();
@@ -174,14 +174,22 @@ function MainEditor() {
       setShowProperties(false)
     }
 
+    const handleCanvasModified = () => {
+      markAsModified();
+    }
+
     canvas.on("selection:created", handleSelectionCreated)
     canvas.on("selection:cleared", handleSelectionCleared)
+    canvas.on("object:modified", handleCanvasModified)
+    canvas.on("path:created", handleCanvasModified)
 
     return () => {
       canvas.off("selection:created", handleSelectionCreated)
       canvas.off("selection:cleared", handleSelectionCleared)
+      canvas.off("object:modified", handleCanvasModified)
+      canvas.off("path:created", handleCanvasModified)
     }
-  }, [canvas])
+  }, [canvas, markAsModified])
 
   useEffect(() => {
     const init = async () => {

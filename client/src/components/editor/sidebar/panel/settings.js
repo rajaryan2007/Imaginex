@@ -46,7 +46,7 @@ function SettingPanel() {
 
   const [backgroundColor, setBackgroundColor] = useState('#ffffff')
 
-  const { canvas } = useEditorStore();
+  const { canvas, markAsModified } = useEditorStore();
 
   const handleColorChange = (e) => {
     setBackgroundColor(e.target.value)
@@ -63,6 +63,7 @@ function SettingPanel() {
     canvas.set('backgroundColor', backgroundColor);
     canvas.renderAll();
     centerCanvas(canvas);
+    markAsModified();
   }
 
 

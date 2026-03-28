@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 
 function ElementsPanels() {
   
-  const {canvas} = useEditorStore();
+  const {canvas, markAsModified} = useEditorStore();
 
   const miniCanvasRef = useRef({});
   const canvasElementRef = useRef({});
@@ -110,6 +110,7 @@ function ElementsPanels() {
 
   const handleShapeClick = (type)=>{
     addShapeToCanvas(canvas,type);
+    markAsModified();
   }
   return (
     <div className='h-full overflow-y-auto' >

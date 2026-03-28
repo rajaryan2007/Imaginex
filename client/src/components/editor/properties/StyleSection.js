@@ -2,6 +2,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 
+const formatColorForInput = (colorStr) => {
+    if (!colorStr) return '#000000';
+    if (typeof colorStr === 'string' && colorStr.startsWith('#')) return colorStr.slice(0, 7); 
+    const match = typeof colorStr === 'string' ? colorStr.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/) : null;
+    if (match) {
+        const r = parseInt(match[1], 10);
+        const g = parseInt(match[2], 10);
+        const b = parseInt(match[3], 10);
+        return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+    }
+    return '#000000'; // Fallback for native color input, which strictly requires hex
+}
+
 export default function StyleSection({ properties, onChange, onShadowChange }) {
     return (
         <>
@@ -10,7 +23,7 @@ export default function StyleSection({ properties, onChange, onShadowChange }) {
                 <Label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider leading-none block">Fill Color</Label>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 border-2 border-slate-200 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
-                        <Input type="color" value={properties.fill}
+                        <Input type="color" value={formatColorForInput(properties.fill)}
                             onChange={(e) => onChange('fill', e.target.value)}
                             className="w-[120%] h-[120%] -m-[10%] p-0 border-none cursor-pointer" />
                     </div>
@@ -25,7 +38,7 @@ export default function StyleSection({ properties, onChange, onShadowChange }) {
                 <Label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider leading-none block">Stroke Color</Label>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 border-2 border-slate-200 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
-                        <Input type="color" value={properties.stroke}
+                        <Input type="color" value={formatColorForInput(properties.stroke)}
                             onChange={(e) => onChange('stroke', e.target.value)}
                             className="w-[120%] h-[120%] -m-[10%] p-0 border-none cursor-pointer" />
                     </div>
@@ -61,7 +74,7 @@ export default function StyleSection({ properties, onChange, onShadowChange }) {
                 <Label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider leading-none block">Shadow Effect</Label>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 border-2 border-slate-200 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
-                        <Input type="color" value={properties.shadowColor}
+                        <Input type="color" value={formatColorForInput(properties.shadowColor)}
                             onChange={(e) => onShadowChange('shadowColor', e.target.value)}
                             className="w-[120%] h-[120%] -m-[10%] p-0 border-none cursor-pointer" />
                     </div>

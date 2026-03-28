@@ -27,7 +27,7 @@ export async function saveDesign(designData, designId = null) {
 }
 
 export async function deleteDesign(designId) {
-    return fetchWithAuth(`/v1/design/${designId}`, {
+    return fetchWithAuth(`/v1/designs/${designId}`, {
         method: "DELETE"
     })
 }
@@ -36,14 +36,65 @@ export async function saveCanvasState(canvas, designId = null, title = "Untitled
     if (!canvas) return false;
 
     try {
-        const canvasJson = canvas.toJSON();
-        const designData = {
-            title: title,
-            canvasState: canvasJson,
+        const canvasData = {
             width: canvas.width,
-            height: canvas.height
-        }
+            height: canvas.height,
+            backgroundColor: canvas.backgroundColor,
+            objects: canvas.getObjects().map(obj => {
+                const data = {
+                    type: obj.type,
+                    left: obj.left,
+                    top: obj.top,
+                    width: obj.width,
+                    height: obj.height,
+                    scaleX: obj.scaleX,
+                    scaleY: obj.scaleY,
+                    angle: obj.angle,
+                    opacity: obj.opacity,
+                    fill: obj.fill,
+                    stroke: obj.stroke,
+                    strokeWidth: obj.strokeWidth,
+                    originX: obj.originX,
+                    originY: obj.originY,
+                    flipX: obj.flipX,
+                    flipY: obj.flipY,
+                    metadata: obj.metadata || {}
+                };
+
+                if (obj.type === 'image') {
+                    data.src = obj.src;
+                    data.crossOrigin = obj.crossOrigin;
+                }
+
+                if (obj.type === 'text') {
+                    data.text = obj.text;
+                    data.fontSize = obj.fontSize;
+                    data.fontFamily = obj.fontFamily;
+                    data.fontWeight = obj.fontWeight;
+                    data.fontStyle = obj.fontStyle;
+                    data.textAlign = obj.textAlign;
+                    data.fill = obj.fill;
+                }
+
+                if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
+                    data.fill = obj.fill;
+                    data.stroke = obj.stroke;
+                    data.strokeWidth = obj.strokeWidth;
+                }
+
+                return data;
+            })
+        };
+
+        const response = await saveDesign({
+            title,
+            canvasData,
+            thumbnail: null
+        }, designId);
+
+        return response.success;
     } catch (error) {
-        throw new Error("Failed to save canvas state", error)
+        console.error("Error saving canvas state:", error);
+        return false;
     }
 }

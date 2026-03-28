@@ -14,7 +14,9 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((e) => console.log('Failed to connect to MongoDB', e))
 
 app.use(cors({
-  origin: allowedOrigins
+  origin: allowedOrigins,
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-user-email', 'x-user-name']
 }))
 app.use(helmet())
 app.use(express.json())

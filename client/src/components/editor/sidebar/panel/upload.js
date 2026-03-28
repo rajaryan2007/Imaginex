@@ -10,7 +10,7 @@ import { uploadFileWithAuth } from "@/service/upload-media";
 import { addImageToCanvas } from "@/fabric/fabric-utils";
 
 function UploadPanel() {
-  const { canvas } = useEditorStore();
+  const { canvas, markAsModified } = useEditorStore();
 
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +59,7 @@ function UploadPanel() {
   
   const handleAddImage = (ImageUrl) =>{
     addImageToCanvas(canvas,ImageUrl);
+    markAsModified();
   }
   
   return (

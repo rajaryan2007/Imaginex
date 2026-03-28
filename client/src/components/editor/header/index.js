@@ -14,7 +14,7 @@ const { ChevronDown, Pencil, Eye, Save, LogOut, Star, Download } = require("luci
 
 function Header() {
 
-  const { isEditing, setIsEditing, name, setName, canvas } = useEditorStore();
+  const { isEditing, setIsEditing, name, setName, canvas, markAsModified } = useEditorStore();
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
@@ -35,6 +35,11 @@ function Header() {
       obj.evented = isEditing;
     })
   }, [isEditing, canvas]);
+
+  const handleSaveChangeInCanvas = () => {
+    console.log("button is clicked");
+    markAsModified();
+  }
 
   const handleDownload = () => {
     setExportOpen(true);
@@ -72,7 +77,7 @@ function Header() {
       </DropdownMenu>
     </div>
     <div>
-      <button className="flex items-center justify-center w-8 h-8 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors relative" title="save" >
+      <button onClick={handleSaveChangeInCanvas} className="flex items-center justify-center w-8 h-8 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors relative" title="save" >
         <Save className="w-5 h-5" />
       </button>
     </div>

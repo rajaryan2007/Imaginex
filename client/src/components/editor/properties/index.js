@@ -10,7 +10,7 @@ import ActionsSection from "./ActionsSection";
 import StyleSection from "./StyleSection";
 
 function Properties() {
-    const { canvas } = useEditorStore();
+    const { canvas, markAsModified } = useEditorStore();
     const [selectedObject, setSelectedObject] = useState(null);
     const [objectType, setObjectType] = useState(null);
     const [properties, setProperties] = useState({
@@ -90,6 +90,7 @@ function Properties() {
         selectedObject.setCoords();
         canvas.requestRenderAll();
         setProperties(prev => ({ ...prev, [property]: value }));
+        markAsModified();
     };
 
     const handleTextToggle = (prop, activeVal, inactiveVal) => {
@@ -98,6 +99,7 @@ function Properties() {
         selectedObject.set(prop, newVal);
         canvas.requestRenderAll();
         setProperties(prev => ({ ...prev, [prop]: newVal }));
+        markAsModified();
     };
 
     const handleBoolToggle = (prop) => {
@@ -106,6 +108,7 @@ function Properties() {
         selectedObject.set(prop, newVal);
         canvas.requestRenderAll();
         setProperties(prev => ({ ...prev, [prop]: newVal }));
+        markAsModified();
     };
 
     const handleShadowChange = (prop, value) => {
@@ -121,6 +124,7 @@ function Properties() {
         selectedObject.set('shadow', newShadow);
         canvas.requestRenderAll();
         setProperties(prev => ({ ...prev, [prop]: value }));
+        markAsModified();
     };
 
     const handleFilterChange = (filterName, value) => {
@@ -150,6 +154,7 @@ function Properties() {
         canvas.requestRenderAll();
 
         setProperties(prev => ({ ...prev, filters: newFiltersState }));
+        markAsModified();
     };
 
     const handleCornerRadius = (value) => {
@@ -158,6 +163,7 @@ function Properties() {
         selectedObject.set({ rx: num, ry: num });
         canvas.requestRenderAll();
         setProperties(prev => ({ ...prev, rx: num, ry: num }));
+        markAsModified();
     };
 
     const handleFlip = (axis) => {
@@ -165,6 +171,7 @@ function Properties() {
         selectedObject.set(axis, !selectedObject[axis]);
         canvas.requestRenderAll();
         setProperties(prev => ({ ...prev, [axis]: !prev[axis] }));
+        markAsModified();
     };
 
     const handleDelete = () => {
@@ -172,6 +179,7 @@ function Properties() {
         canvas.remove(selectedObject);
         canvas.discardActiveObject();
         canvas.requestRenderAll();
+        markAsModified();
     };
 
     const handleDuplicate = () => {
@@ -187,6 +195,7 @@ function Properties() {
             }
             canvas.setActiveObject(cloned);
             canvas.requestRenderAll();
+            markAsModified();
         });
     };
 
@@ -200,6 +209,7 @@ function Properties() {
         };
         actions[action]?.();
         canvas.requestRenderAll();
+        markAsModified();
     };
 
     if (!selectedObject) return null;
