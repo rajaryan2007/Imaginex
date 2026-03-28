@@ -12,7 +12,7 @@ const allowedOrigins = [
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Cached connection for Vercel serverless - avoids buffering timeout on cold starts
+// Cached connection for Vercel serverless
 let cachedConnection = null;
 
 async function connectDB() {
@@ -20,15 +20,12 @@ async function connectDB() {
     return cachedConnection;
   }
   cachedConnection = await mongoose.connect(process.env.MONGO_URI, {
-    bufferCommands: false,
     serverSelectionTimeoutMS: 10000,
     socketTimeoutMS: 45000,
   });
   console.log('Connected to MongoDB');
   return cachedConnection;
 }
-
-connectDB().catch((e) => console.error('Failed to connect to MongoDB', e));
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -45,11 +42,23 @@ app.use(helmet())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection failed:', err.message);
+    res.status(503).json({ success: false, message: 'Database connection failed' });
+  }
+});
+
 app.use((req, res, next) => {
   console.log(`Design Service received: ${req.method} ${req.url}`);
   next();
 });
 app.use('/api/designs', designRoutes)
+
 
 
 
