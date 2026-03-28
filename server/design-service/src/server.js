@@ -4,17 +4,26 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const helmet = require('helmet')
 const designRoutes = require("./routes/design-routes")
-const allowedOrigins = ['http://localhost:3000']
-const app = express();
+const allowedOrigins = [
+  'http://localhost:3000',
+  process.env.CLIENT_URL
+].filter(Boolean);
 
-const PORT = process.env.PORT || 5001
+const app = express();
+const PORT = process.env.PORT || 5001;
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((e) => console.log('Failed to connect to MongoDB', e))
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-user-email', 'x-user-name']
 }))

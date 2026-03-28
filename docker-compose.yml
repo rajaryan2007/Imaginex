@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # nextjs 
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./client/.env
+    # Volume syncs local changes into the container for hot-reloading
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api-gateway
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./server/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/api-gateway/.env
+    volumes:
+      - ./server/api-gateway:/app
+      - /app/node_modules
+
+  # design Microservice
+  design-service:
+    build:
+      context: ./server/design-service
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./server/design-service/.env
+    volumes:
+      - ./server/design-service:/app
+      - /app/node_modules
+
+  # subscription Microservice
+  subscription-service:
+    build:
+      context: ./server/subscription-service
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    env_file:
+      - ./server/subscription-service/.env
+    volumes:
+      - ./server/subscription-service:/app
+      - /app/node_modules
+
+  upload-service:
+    build:
+      context: ./server/upload-service
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    env_file:
+      - ./server/upload-service/.env
+    volumes:
+      - ./server/upload-service:/app
+      - /app/node_modules

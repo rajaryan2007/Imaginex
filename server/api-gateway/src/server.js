@@ -4,15 +4,23 @@ const proxy = require('express-http-proxy');
 const cors = require('cors');
 const helmet = require('helmet');
 const authMiddleware = require('./middleware/auth-middleware');
-const allowedOrigins = ['http://localhost:3000']
-const app = express()
+const allowedOrigins = [
+  'http://localhost:3000',
+  process.env.CLIENT_URL
+].filter(Boolean);
 
-
-const PORT = process.env.PORT || 5000
+const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(helmet());
 app.use(cors({ 
-  origin: allowedOrigins,
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id', 'x-user-email', 'x-user-name']
 }));

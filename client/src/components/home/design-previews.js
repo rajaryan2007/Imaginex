@@ -93,7 +93,7 @@ function DesingPreview({ design }) {
                 }
             }
         }
-    }, [design?._id, canvasId])
+    }, [design?._id, canvasId, design?.canvasData, design?.width, design?.height])
 
     return (
         <canvas

@@ -32,15 +32,53 @@ export const initializeFabric = async (canvasE1, containerE1) => {
 export const centerCanvas = (canvas) => {
   if (!canvas || !canvas.wrapperEl) return;
 
-  const canvasWrapper = canvas.wrapperEl;
+  const updateLayout = () => {
+    const canvasWrapper = canvas.wrapperEl;
+    
+    // Calculate available screen space
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    // Mobile devices need more vertical room for the bottom tabs and top header
+    const isMobile = windowWidth < 768;
+    const paddingX = isMobile ? 32 : 120;
+    const paddingY = isMobile ? 240 : 120; 
+    
+    const availableWidth = windowWidth - paddingX;
+    const availableHeight = windowHeight - paddingY;
+    
+    const scaleX = availableWidth / canvas.width;
+    const scaleY = availableHeight / canvas.height;
+    
+    // Scale down if canvas is larger than screen, bounded by 1 so it doesn't digitally artificially blow up small designs
+    const scale = Math.min(scaleX, scaleY, 1);
 
-  canvasWrapper.style.width = `${canvas.width}px`;
-  canvasWrapper.style.height = `${canvas.height}px`;
+    canvasWrapper.style.width = `${canvas.width}px`;
+    canvasWrapper.style.height = `${canvas.height}px`;
 
-  canvasWrapper.style.position = "absolute";
-  canvasWrapper.style.top = "50%";
-  canvasWrapper.style.left = "50%";
-  canvasWrapper.style.transform = "translate(-50%, -50%)";
+    canvasWrapper.style.position = "absolute";
+    canvasWrapper.style.top = isMobile ? "45%" : "50%";
+    canvasWrapper.style.left = "50%";
+    canvasWrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    canvasWrapper.style.transformOrigin = "center center";
+
+    // Re-calculate fabric's internal hitboxes to match the new CSS scale
+    canvas.calcOffset();
+  };
+
+  updateLayout();
+
+  // Attach a window resize listener, ensuring we don't attach multiple
+  if (!canvas._hasResizeListener) {
+    window.addEventListener('resize', () => {
+      // Debounce the resize slightly
+      clearTimeout(canvas._resizeTimer);
+      canvas._resizeTimer = setTimeout(() => {
+        updateLayout();
+      }, 100);
+    });
+    canvas._hasResizeListener = true;
+  }
 }
 
 

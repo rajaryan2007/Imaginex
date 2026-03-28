@@ -1,4 +1,4 @@
-const { uploadMediaToCloudinary } = require("../utils/cloudinary");
+const { uploadMediaToCloudinary, deleteMediaFromCloudinary } = require("../utils/cloudinary");
 const Media = require("../models/media");
 
 
@@ -47,4 +47,28 @@ const getAllMediaByUserId = async (req, res) => {
     }
 }
 
-module.exports = { uploadMedia, getAllMediaByUserId }
+const deleteMedia = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { userId } = req.user;
+
+        const media = await Media.findOne({ _id: id, userId });
+        
+        if (!media) {
+            return res.status(404).json({ success: false, message: "Media not found or unauthorized" });
+        }
+
+        if (media.cloudinaryId) {
+            await deleteMediaFromCloudinary(media.cloudinaryId);
+        }
+        
+        await Media.findByIdAndDelete(id);
+
+        return res.status(200).json({ success: true, message: "Media deleted successfully", id });
+    } catch (error) {
+        console.error("Error in deleteMedia:", error);
+        res.status(500).json({ success: false, message: "Failed to delete media", error: error.message });
+    }
+}
+
+module.exports = { uploadMedia, getAllMediaByUserId, deleteMedia }

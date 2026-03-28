@@ -1,7 +1,7 @@
 'use client'
 
 import { saveDesign } from "@/service/design-service";
-import { CreditCard, FolderOpen, Home, Plus } from "lucide-react";
+import { FolderOpen, Home, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -69,10 +69,6 @@ function HomeSideBar() {
             {
 
               icon: <FolderOpen className="h-6 w-6" />, label: "Projects", active: true
-            },
-            {
-
-              icon: <CreditCard className="h-6 w-6" />, label: "Billing", active: true
             }
           ].map((menuItem, index) => (
             <div key={index} className="flex flex-col items-center w-full" >
