@@ -9,9 +9,23 @@ const app = express();
 
 const PORT = process.env.PORT || 5002
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((e) => console.log('mongoDB connected'))
+// Cached connection for Vercel serverless - avoids buffering timeout on cold starts
+let cachedConnection = null;
+
+async function connectDB() {
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    return cachedConnection;
+  }
+  cachedConnection = await mongoose.connect(process.env.MONGO_URI, {
+    bufferCommands: false,
+    serverSelectionTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+  });
+  console.log('Connected to MongoDB');
+  return cachedConnection;
+}
+
+connectDB().catch((e) => console.error('Failed to connect to MongoDB', e));
 
 app.use(cors())
 app.use(helmet())
