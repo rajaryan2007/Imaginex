@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((e) => console.log('Failed to connect to MongoDB', e))
 
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
       callback(null, true);
     } else {

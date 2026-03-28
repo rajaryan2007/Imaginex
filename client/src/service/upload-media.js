@@ -1,7 +1,8 @@
 import { method } from "lodash";
 import { getSession } from "next-auth/react";
 
-const API_URL = "http://localhost:5000/v1/media";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || "http://localhost:5000";
+const API_URL = `${BASE_URL}/v1/media`;
 
 export async function uploadFileWithAuth(file, metaData = {}) {
     const session = await getSession();
